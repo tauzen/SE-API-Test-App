@@ -75,21 +75,21 @@ var SETest = {
       recordLogs("logs3-1", "Get SEReaders");
       window.navigator.seManager.getSEReaders()
       .then((readers) => {
+        window.reader = readers[0];
         recordLogs("logs3-1", "Open one session");
-        window.testSESession = readers[0].openSession();
         recordLogs("logs3-1", "Check if reader object from session instance is equal to reader instance");
-        if (readers[0] == window.testSESession.reader) {
+        if (readers[0] == readers[0].openSession().reader) {
           updateResultStatus("result3-1", "Green", "Pass");
         }
 	else {
           updateResultStatus("result3-1", "Red", "Fail");
         }
-        window.testSESession.closeAll();
+        window.reader.closeAll();
       })
       .catch((err) => {
         recordLogs("logs3-1", "error:" + err);
         updateResultStatus("result3-1", "Red", "Fail");
-        window.testSESession.closeAll();
+        window.reader.closeAll();
       });
     }
   },
@@ -98,6 +98,42 @@ var SETest = {
     this.test31Button.disabled = false;
     updateResultStatus("result3-1", "Black", "None");
     clearLogs("logs3-1");
+  },
+
+  // Test #3-2
+  test32Case: function() {
+    recordLogs("logs3-2", "Start testing ...");
+    this.test32Button.disabled = true;
+    if (!window.navigator.seManager) {
+      recordLogs("logs3-2", "SecureElement API is not present");
+      updateResultStatus("result3-2", "Red", "Fail");
+    }
+    else {
+      recordLogs("logs3-2", "Get SEReaders");
+      window.navigator.seManager.getSEReaders()
+      .then((readers) => {
+        window.reader = readers[0];
+        recordLogs("logs3-2", "Open one session and check session status");
+        if (readers[0].openSession().isClosed == false) {
+            updateResultStatus("result3-2", "Green", "Pass");
+        }
+        else {
+            updateResultStatus("result3-2", "Red", "Fail");
+        }
+        window.reader.closeAll();
+      })
+      .catch((err) => {
+        recordLogs("logs3-2", "error:" + err);
+        updateResultStatus("result3-2", "Red", "Fail");
+        window.reader.closeAll();
+      });
+    }
+  },
+
+  reset32Case: function() {
+    this.test32Button.disabled = false;
+    updateResultStatus("result3-2", "Black", "None");
+    clearLogs("logs3-2");
   },
 
 };
