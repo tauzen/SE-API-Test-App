@@ -164,7 +164,7 @@ var SETest = {
       recordLogs("logs2-3", "Get SEReaders");
       window.navigator.seManager.getSEReaders()
       .then((readers) => {
-           recordLogs("logs2-4", "try to open two sessions");
+          recordLogs("logs2-4", "try to open two sessions");
           recordLogs("logs2-3", "Open 1st session...");
           window.reader = readers[0];
           return  readers[0].openSession();
@@ -194,10 +194,12 @@ var SETest = {
                 updateResultStatus("result2-3", "Green", "Pass");
               }
             }
+
       })
       .catch((err) => {
         recordLogs("logs2-3", "error:" + err);
         updateResultStatus("result2-3", "Red", "Fail");
+        window.reader.closeAll();
       });
     }
   },
@@ -244,9 +246,9 @@ var SETest = {
       .then((channel) => {
            recordLogs("logs2-4", "2nd. channel opened to PPSE applet...");
            window.channel2 = channel;
-           recordLogs("logs2-4", "Call SESession.closeAll()...");
-           
+           recordLogs("logs2-4", "Call SESession.closeAll()...");         
            return window.testSESession.closeAll();
+
        })   
       .then(() => {
         recordLogs("logs2-4", "Check if all sessions and channels have been closed");
@@ -261,7 +263,7 @@ var SETest = {
       .catch((err) => {
         recordLogs("logs2-4", "error:" + err);
         updateResultStatus("result2-4", "Red", "Fail");
-        window.testSESession.closeAll();
+        window.reader.closeAll();
       });
     }
   },
