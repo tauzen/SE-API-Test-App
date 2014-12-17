@@ -172,6 +172,49 @@ var SETest = {
     clearLogs("logs3-3");
   },
 
+  // Test #3-4
+  test34Case: function() {
+    recordLogs("logs3-4", "Start testing ...");
+    this.test34Button.disabled = true;
+    if (!window.navigator.seManager) {
+      recordLogs("logs3-4", "SecureElement API is not present");
+      updateResultStatus("result3-4", "Red", "Fail");
+    }
+    else {
+      recordLogs("logs3-4", "Get SEReaders");
+      window.navigator.seManager.getSEReaders()
+      .then((readers) => {
+        window.reader = readers[0];
+        recordLogs("logs3-4", "Open one session");
+        return readers[0].openSession();
+      })
+      .then((session) => {
+        recordLogs("logs3-4", "Open one logical channel to an illegal applet (length of AID is less than 5)");
+        session.openLogicalChannel(hexString2byte(window.AID.AID_Illegal_1));
+        recordLogs("logs3-4", "Do not catch an error");
+        updateResultStatus("result3-4", "Red", "Fail");
+        window.reader.closeAll();
+      })
+      .catch((err) => {
+        recordLogs("logs3-4", "error:" + err);
+        if (err.indexOf("SEInvalidChannelError") >= 0) {
+          updateResultStatus("result3-4", "Green", "Pass");
+        }
+        else {
+          recordLogs("logs3-4", "Incorrect error type");
+          updateResultStatus("result3-4", "Red", "Fail");
+        }
+        window.reader.closeAll();
+      });
+    }
+  },
+
+  reset34Case: function() {
+    this.test34Button.disabled = false;
+    updateResultStatus("result3-4", "Black", "None");
+    clearLogs("logs3-4");
+  },
+
 };
 
 window.addEventListener('load', SETest.init.bind(SETest));
