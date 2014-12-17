@@ -145,6 +145,7 @@ var SETest = {
       window.navigator.seManager.getSEReaders()
       .then((readers) => {
         recordLogs("logs2-3", "Open two sessions: s1, s2");
+        window.reader = readers[0];
         window.testSESession1 = readers[0].openSession();
         window.testSESession2 = readers[0].openSession();
         if (window.testSESession1 == window.testSESession2) {
@@ -168,6 +169,7 @@ var SETest = {
       .catch((err) => {
         recordLogs("logs2-3", "error:" + err);
         updateResultStatus("result2-3", "Red", "Fail");
+        window.reader.closeAll();
       });
     }
   },
@@ -215,7 +217,7 @@ var SETest = {
            recordLogs("logs2-4", "2nd. channel openned to PPSE applet...");
            window.channel2 = channel;
            recordLogs("logs2-4", "Call reader.closeAll()...");
-           return window.testSESession.closeAll();
+           return window.reader.closeAll();
        })   
       .then(() => {
         recordLogs("logs2-4", "Check if all sessions and channels have been closed");
@@ -230,7 +232,7 @@ var SETest = {
       .catch((err) => {
         recordLogs("logs2-4", "error:" + err);
         updateResultStatus("result2-4", "Red", "Fail");
-        window.testSESession.closeAll();
+        window.reader.closeAll();
       });
     }
   },
