@@ -136,6 +136,42 @@ var SETest = {
     clearLogs("logs3-2");
   },
 
+  // Test #3-3 
+  test33Case: function() {
+    recordLogs("logs3-3", "Start testing ...");
+    this.test33Button.disabled = true;
+    if (!window.navigator.seManager) {
+      recordLogs("logs3-3", "SecureElement API is not present");
+      updateResultStatus("result3-3", "Red", "Fail");
+    }
+    else {
+      recordLogs("logs3-3", "Get SEReaders");
+      window.navigator.seManager.getSEReaders()
+      .then((readers) => {
+        window.reader = readers[0];
+        recordLogs("logs3-3", "Open one session");
+        return readers[0].openSession();
+      })
+      .then((session) => {
+        recordLogs("logs3-3", "Open one logical channel to CRS applet ...");
+        session.openLogicalChannel(hexString2byte(window.AID.CRS));
+        updateResultStatus("result3-3", "Green", "Pass");
+        window.reader.closeAll();
+      })
+      .catch((err) => {
+        recordLogs("logs3-3", "error:" + err);
+        updateResultStatus("result3-3", "Red", "Fail");
+        window.reader.closeAll();
+      });
+    }
+  },
+
+  reset33Case: function() {
+    this.test33Button.disabled = false;
+    updateResultStatus("result3-3", "Black", "None");
+    clearLogs("logs3-3");
+  },
+
 };
 
 window.addEventListener('load', SETest.init.bind(SETest));
