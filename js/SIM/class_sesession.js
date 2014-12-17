@@ -63,6 +63,43 @@ var SETest = {
     this.reset34Button.removeEventListener('click', this.reset34Case.bind(this));
   },
 
+  // Test #3-1
+  test31Case: function() {
+    recordLogs("logs3-1", "Start testing ...");
+    this.test31Button.disabled = true;
+    if (!window.navigator.seManager) {
+      recordLogs("logs3-1", "SecureElement API is not present");
+      updateResultStatus("result3-1", "Red", "Fail");
+    }
+    else {
+      recordLogs("logs3-1", "Get SEReaders");
+      window.navigator.seManager.getSEReaders()
+      .then((readers) => {
+        recordLogs("logs3-1", "Open one session");
+        window.testSESession = readers[0].openSession();
+        recordLogs("logs3-1", "Check if reader object from session instance is equal to reader instance");
+        if (readers[0] == window.testSESession.reader) {
+          updateResultStatus("result3-1", "Green", "Pass");
+        }
+	else {
+          updateResultStatus("result3-1", "Red", "Fail");
+        }
+        window.testSESession.closeAll();
+      })
+      .catch((err) => {
+        recordLogs("logs3-1", "error:" + err);
+        updateResultStatus("result3-1", "Red", "Fail");
+        window.testSESession.closeAll();
+      });
+    }
+  },
+
+  reset31Case: function() {
+    this.test31Button.disabled = false;
+    updateResultStatus("result3-1", "Black", "None");
+    clearLogs("logs3-1");
+  },
+
 };
 
 window.addEventListener('load', SETest.init.bind(SETest));
