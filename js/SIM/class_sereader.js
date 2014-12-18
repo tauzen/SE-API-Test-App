@@ -40,16 +40,6 @@ var SETest = {
     delete this.reset24Button;
     return this.reset24Button = document.getElementById('reset2-4');
   },
-  
-  get test25Button() {
-    delete this.test25Button;
-    return this.test25Button = document.getElementById('test2-5');
-  },
-
-  get reset25Button() {
-    delete this.reset25Button;
-    return this.reset25Button = document.getElementById('reset2-5');
-  },
 
   init: function () {
     this.test21Button.addEventListener('click', this.test21Case.bind(this));
@@ -60,9 +50,6 @@ var SETest = {
     this.reset23Button.addEventListener('click', this.reset23Case.bind(this));
     this.test24Button.addEventListener('click', this.test24Case.bind(this));
     this.reset24Button.addEventListener('click', this.reset24Case.bind(this));
-    
-    this.test25Button.addEventListener('click', this.test25Case.bind(this));
-    this.reset25Button.addEventListener('click', this.reset25Case.bind(this));
   },
 
   uninit: function() {
@@ -74,9 +61,6 @@ var SETest = {
     this.reset23Button.removeEventListener('click', this.reset23Case.bind(this));
     this.test24Button.removeEventListener('click', this.test24Case.bind(this));
     this.reset24Button.removeEventListener('click', this.reset24Case.bind(this));
-    
-    this.test25Button.removeEventListener('click', this.test25Case.bind(this));
-    this.reset25Button.removeEventListener('click', this.reset25Case.bind(this));
   },
 
   // Test #2-1
@@ -248,6 +232,9 @@ var SETest = {
       })   
       .then(() => {
         recordLogs("logs2-4", "Check if all sessions and channels have been closed");
+        recordLogs("logs2-4", "window.testSESession.isClosed = " + window.testSESession.isClosed);
+        recordLogs("logs2-4", "window.channel1.isClosed = " + window.channel1.isClosed);
+        recordLogs("logs2-4", "window.channel2.isClosed = " + window.channel2.isClosed);
         if ((window.testSESession.isClosed && window.channel1.isClosed && window.channel2.isClosed) == false) {
           recordLogs("logs2-4", "Sessions or channels have not been closed");
           updateResultStatus("result2-4", "Red", "Fail");
@@ -270,39 +257,6 @@ var SETest = {
     clearLogs("logs2-4");
   },
     
-   // Test #2-5
-  test25Case: function() {
-    recordLogs("logs2-5", "Start testing ...");
-    this.test25Button.disabled = true;
-    if (!window.navigator.seManager) {
-      recordLogs("logs2-5", "SecureElement API is not present");
-      updateResultStatus("result2-5", "Red", "Fail");
-    }
-    else {
-      recordLogs("logs2-5", "Execute seManager.getSEReaders()");
-      window.navigator.seManager.getSEReaders()
-      .then((readers) => {
-        recordLogs("logs2-5", "get readers[0]");
-        window.reader = readers[0];
-        recordLogs("logs2-5", "call readers[0].closeAll()...");
-        return readers[0].closeAll();
-      })
-      .then(() => {
-        updateResultStatus("result2-5", "Green", "Pass");
-      })
-      .catch((err) => {
-        recordLogs("logs2-5", "error:" + err);
-        updateResultStatus("result2-5", "Red", "Fail");
-        window.testSESession.closeAll();
-      });
-    }
-  },
-
-  reset25Case: function() {
-    this.test25Button.disabled = false;
-    updateResultStatus("result2-5", "Black", "None");
-    clearLogs("logs2-5");
-  },  
 };
 
 window.addEventListener('load', SETest.init.bind(SETest));
