@@ -128,7 +128,7 @@ var SETest = {
       .then((readers) => {
          window.reader = readers[0];
          recordLogs("logs2-2", "Open a session");
-         return   readers[0].openSession();
+         return readers[0].openSession();
          })
       .then((session)=> {
         if (session) {
@@ -142,6 +142,7 @@ var SETest = {
       .catch((err) => {
         recordLogs("logs2-2", "error:" + err);
         updateResultStatus("result2-2", "Red", "Fail");
+        window.reader.closeAll();
       });
     }
   },
@@ -164,37 +165,35 @@ var SETest = {
       recordLogs("logs2-3", "Get SEReaders");
       window.navigator.seManager.getSEReaders()
       .then((readers) => {
-          recordLogs("logs2-4", "try to open two sessions");
-          recordLogs("logs2-3", "Open 1st session...");
-          window.reader = readers[0];
-          return  readers[0].openSession();
-        })
-        .then((session) => {
-          window.testSESession1 = session;
-          recordLogs("logs2-3", "Open 2nd session...");
-          return   window.reader.openSession();
-        })
-        .then((session) => {
-            window.testSESession2 = session;
-
-            if (window.testSESession1 == window.testSESession2) {
-              recordLogs("logs2-3", "Session instances s1 and s2 are the same");
-              updateResultStatus("result2-3", "Red", "Fail");     
-              window.reader.closeAll(); 
-            }
-            else {
-              recordLogs("logs2-3", "Execute reader.closeAll()");
-    	        window.reader.closeAll();
-              recordLogs("logs2-3", "Check if all sessions have been closed"); 
-              if ((window.testSESession1.isClosed && window.testSESession2.isClosed) == false){
-                recordLogs("logs2-3", "Sessions have not been closed");
-                updateResultStatus("result2-3", "Red", "Fail");
-              }
-              else {
-                updateResultStatus("result2-3", "Green", "Pass");
-              }
-            }
-
+        recordLogs("logs2-3", "try to open two sessions");
+        recordLogs("logs2-3", "Open 1st session...");
+        window.reader = readers[0];
+        return readers[0].openSession();
+      })
+      .then((session) => {
+        window.testSESession1 = session;
+        recordLogs("logs2-3", "Open 2nd session...");
+        return window.reader.openSession();
+      })
+      .then((session) => {
+        window.testSESession2 = session;
+        if (window.testSESession1 == window.testSESession2) {
+          recordLogs("logs2-3", "Session instances s1 and s2 are the same");
+          updateResultStatus("result2-3", "Red", "Fail");     
+          window.reader.closeAll(); 
+        }
+        else {
+          recordLogs("logs2-3", "Execute reader.closeAll()");
+    	  window.reader.closeAll();
+          recordLogs("logs2-3", "Check if all sessions have been closed"); 
+          if((window.testSESession1.isClosed && window.testSESession2.isClosed) == false){
+            recordLogs("logs2-3", "Sessions have not been closed");
+            updateResultStatus("result2-3", "Red", "Fail");
+          }
+          else {
+            updateResultStatus("result2-3", "Green", "Pass");
+          }
+        }
       })
       .catch((err) => {
         recordLogs("logs2-3", "error:" + err);
@@ -231,25 +230,22 @@ var SETest = {
         recordLogs("logs2-4", "try to open two logical channels");
         recordLogs("logs2-4", "Open the 1st. logical channel to CRS applet...");
         return session.openLogicalChannel(hexString2byte(window.AID.CRS));
-    
       })
       .then((channel) => {
-           recordLogs("logs2-4", "1st. channel opened to CRS applet...");
-           window.channel1 = channel;
-           return window.testSESession;
+        recordLogs("logs2-4", "1st. channel opened to CRS applet...");
+        window.channel1 = channel;
+        return window.testSESession;
        })   
       .then((session) => {
-          recordLogs("logs2-4", "Open the 2nd. logical channel to PPSE applet...");
-          return session.openLogicalChannel(hexString2byte(window.AID.PPSE));
-            
+        recordLogs("logs2-4", "Open the 2nd. logical channel to PPSE applet...");
+        return session.openLogicalChannel(hexString2byte(window.AID.PPSE));    
       })
       .then((channel) => {
-           recordLogs("logs2-4", "2nd. channel opened to PPSE applet...");
-           window.channel2 = channel;
-           recordLogs("logs2-4", "Call SESession.closeAll()...");         
-           return window.testSESession.closeAll();
-
-       })   
+        recordLogs("logs2-4", "2nd. channel opened to PPSE applet...");
+        window.channel2 = channel;
+        recordLogs("logs2-4", "Call SESession.closeAll()...");         
+        return window.testSESession.closeAll();
+      })   
       .then(() => {
         recordLogs("logs2-4", "Check if all sessions and channels have been closed");
         if ((window.testSESession.isClosed && window.channel1.isClosed && window.channel2.isClosed) == false) {
@@ -273,8 +269,6 @@ var SETest = {
     updateResultStatus("result2-4", "Black", "None");
     clearLogs("logs2-4");
   },
-
-    
     
    // Test #2-5
   test25Case: function() {
@@ -293,10 +287,8 @@ var SETest = {
         recordLogs("logs2-5", "call readers[0].closeAll()...");
         return readers[0].closeAll();
       })
-    
       .then(() => {
-            updateResultStatus("result2-5", "Green", "Pass");
-        
+        updateResultStatus("result2-5", "Green", "Pass");
       })
       .catch((err) => {
         recordLogs("logs2-5", "error:" + err);
