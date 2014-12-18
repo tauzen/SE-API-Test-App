@@ -243,8 +243,8 @@ var SETest = {
       .then((channel) => {
         recordLogs("logs2-4", "2nd. channel opened to PPSE applet...");
         window.channel2 = channel;
-        recordLogs("logs2-4", "Call SESession.closeAll()...");         
-        return window.testSESession.closeAll();
+        recordLogs("logs2-4", "Call SEReader.closeAll()...");         
+        return window.reader.closeAll();
       })   
       .then(() => {
         recordLogs("logs2-4", "Check if all sessions and channels have been closed");
