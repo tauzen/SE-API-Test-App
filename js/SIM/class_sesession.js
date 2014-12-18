@@ -164,13 +164,11 @@ var SETest = {
         return session.openLogicalChannel(hexString2byte(window.AID.CRS));
       })
       .then((channel) => {
-        return window.reader.closeAll();
-      })
-      .then(() => {
         updateResultStatus("result3-3", "Green", "Pass");
+        window.reader.closeAll();
       })
       .catch((err) => {
-        recordLogs("logs3-3", "error:" + err);
+        recordLogs("logs3-3", "error:" + err); 
         updateResultStatus("result3-3", "Red", "Fail");
         window.reader.closeAll();
       });
