@@ -81,7 +81,7 @@ var SETest = {
       })
       .then((session) => {
         recordLogs("logs3-1", "Check if reader object from session instance is equal to reader instance");
-        if (window.reader != session.reader) { //modify
+        if (window.reader != session.reader) { 
           updateResultStatus("result3-1", "Red", "Fail");
         }
         else {
@@ -122,10 +122,10 @@ var SETest = {
       .then((session) => {
         recordLogs("logs3-2", "Check open session status");
         if (session.isClosed == false) {
-            updateResultStatus("result3-2", "Green", "Pass");
+          updateResultStatus("result3-2", "Green", "Pass");
         }
         else {
-            updateResultStatus("result3-2", "Red", "Fail");
+          updateResultStatus("result3-2", "Red", "Fail");
         }
         window.reader.closeAll();
       })
@@ -208,7 +208,7 @@ var SETest = {
       })
       .catch((err) => {
         recordLogs("logs3-4", "error:" + err);
-        if (err.indexOf("SEInvalidChannelError") >= 0) {
+        if (err.name == "SEInvalidChannelError") {
           updateResultStatus("result3-4", "Green", "Pass");
         }
         else {
