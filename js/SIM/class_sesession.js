@@ -208,7 +208,8 @@ var SETest = {
       })
       .catch((err) => {
         recordLogs("logs3-4", "error:" + err);
-        if (err.name == "SEInvalidChannelError") {
+        // Should defined later
+        if (err.name == "SEGenericError") {
           updateResultStatus("result3-4", "Green", "Pass");
         }
         else {
