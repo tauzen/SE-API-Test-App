@@ -77,12 +77,15 @@ var SETest = {
       .then((readers) => {
         window.reader = readers[0];
         recordLogs("logs3-1", "Open one session");
+        return readers[0].openSession();
+      })
+      .then((session) => {
         recordLogs("logs3-1", "Check if reader object from session instance is equal to reader instance");
-        if (readers[0] == readers[0].openSession().reader) {
-          updateResultStatus("result3-1", "Green", "Pass");
-        }
-	else {
+        if (window.reader != session.reader) { //modify
           updateResultStatus("result3-1", "Red", "Fail");
+        }
+        else {
+          updateResultStatus("result3-1", "Green", "Pass");
         }
         window.reader.closeAll();
       })
@@ -113,8 +116,12 @@ var SETest = {
       window.navigator.seManager.getSEReaders()
       .then((readers) => {
         window.reader = readers[0];
-        recordLogs("logs3-2", "Open one session and check session status");
-        if (readers[0].openSession().isClosed == false) {
+        recordLogs("logs3-2", "Open one session");
+        return readers[0].openSession();
+      })
+      .then((session) => {
+        recordLogs("logs3-2", "Check open session status");
+        if (session.isClosed == false) {
             updateResultStatus("result3-2", "Green", "Pass");
         }
         else {
@@ -154,9 +161,13 @@ var SETest = {
       })
       .then((session) => {
         recordLogs("logs3-3", "Open one logical channel to CRS applet ...");
-        session.openLogicalChannel(hexString2byte(window.AID.CRS));
+        return session.openLogicalChannel(hexString2byte(window.AID.CRS));
+      })
+      .then((channel) => {
+        return window.reader.closeAll();
+      })
+      .then(() => {
         updateResultStatus("result3-3", "Green", "Pass");
-        window.reader.closeAll();
       })
       .catch((err) => {
         recordLogs("logs3-3", "error:" + err);
@@ -190,7 +201,9 @@ var SETest = {
       })
       .then((session) => {
         recordLogs("logs3-4", "Open one logical channel to an illegal applet (length of AID is less than 5)");
-        session.openLogicalChannel(hexString2byte(window.AID.AID_Illegal_1));
+        return session.openLogicalChannel(hexString2byte(window.AID.AID_Illegal_1));
+      })
+      .then((channel) => {
         recordLogs("logs3-4", "Do not catch an error");
         updateResultStatus("result3-4", "Red", "Fail");
         window.reader.closeAll();
