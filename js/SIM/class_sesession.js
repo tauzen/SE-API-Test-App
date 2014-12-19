@@ -61,6 +61,26 @@ var SETest = {
     return this.reset36Button = document.getElementById('reset3-6');
   },
 
+  get test37Button() {
+    delete this.test37Button;
+    return this.test37Button = document.getElementById('test3-7');
+  },
+
+  get reset37Button() {
+    delete this.reset37Button;
+    return this.reset37Button = document.getElementById('reset3-7');
+  },
+
+  get test38Button() {
+    delete this.test38Button;
+    return this.test38Button = document.getElementById('test3-8');
+  },
+
+  get reset38Button() {
+    delete this.reset38Button;
+    return this.reset38Button = document.getElementById('reset3-8');
+  },
+
   init: function () {
     this.test31Button.addEventListener('click', this.test31Case.bind(this));
     this.reset31Button.addEventListener('click', this.reset31Case.bind(this));
@@ -74,6 +94,10 @@ var SETest = {
     this.reset35Button.addEventListener('click', this.reset35Case.bind(this));
     this.test36Button.addEventListener('click', this.test36Case.bind(this));
     this.reset36Button.addEventListener('click', this.reset36Case.bind(this));
+    this.test37Button.addEventListener('click', this.test37Case.bind(this));
+    this.reset37Button.addEventListener('click', this.reset37Case.bind(this));
+    this.test38Button.addEventListener('click', this.test38Case.bind(this));
+    this.reset38Button.addEventListener('click', this.reset38Case.bind(this));
   },
 
   uninit: function() {
@@ -89,6 +113,10 @@ var SETest = {
     this.reset35Button.removeEventListener('click', this.reset35Case.bind(this));
     this.test36Button.removeEventListener('click', this.test36Case.bind(this));
     this.reset36Button.removeEventListener('click', this.reset36Case.bind(this));
+    this.test37Button.removeEventListener('click', this.test37Case.bind(this));
+    this.reset37Button.removeEventListener('click', this.reset37Case.bind(this));
+    this.test38Button.removeEventListener('click', this.test38Case.bind(this));
+    this.reset38Button.removeEventListener('click', this.reset38Case.bind(this));
   },
 
   // Test #3-1
@@ -345,6 +373,102 @@ var SETest = {
     this.test36Button.disabled = false;
     updateResultStatus("result3-6", "Black", "None");
     clearLogs("logs3-6");
+  },
+
+  // Test #3-7
+  test37Case: function() {
+    recordLogs("logs3-7", "Start testing ...");
+    this.test37Button.disabled = true;
+    if (!window.navigator.seManager) {
+      recordLogs("logs3-7", "SecureElement API is not present");
+      updateResultStatus("result3-7", "Red", "Fail");
+    }
+    else {
+      recordLogs("logs3-7", "Get SEReaders");
+      window.navigator.seManager.getSEReaders()
+      .then((readers) => {
+        window.reader = readers[0];
+        recordLogs("logs3-7", "Open one session");
+        return readers[0].openSession();
+      })
+      .then((session) => {
+        window.testSession = session;
+        recordLogs("logs3-7", "Close session via reader.closeAll()");
+        return window.reader.closeAll();
+      })
+      .then(() => {
+        recordLogs("logs3-7", "Try to open a channel via session that already been closed");
+        return window.testSession.openLogicalChannel(hexString2byte(window.AID.CRS));
+      })
+      .then((channel) => {
+        recordLogs("logs3-7", "Do not catch an error");
+        updateResultStatus("result3-7", "Red", "Fail");
+      })
+      .catch((err) => {
+        recordLogs("logs3-7", "error:" + err);
+        // Should update later after confirmed error method and error type
+        if (err.name == "SEGenericError") {
+          updateResultStatus("result3-7", "Green", "Pass");
+        }
+        else {
+          recordLogs("logs3-7", "Incorrect error type");
+          updateResultStatus("result3-7", "Red", "Fail");
+        }
+        window.reader.closeAll();
+      });
+    }
+  },
+
+  reset37Case: function() {
+    this.test37Button.disabled = false;
+    updateResultStatus("result3-7", "Black", "None");
+    clearLogs("logs3-7");
+  },
+
+  // Test #3-8
+  test38Case: function() {
+    recordLogs("logs3-8", "Start testing ...");
+    this.test38Button.disabled = true;
+    if (!window.navigator.seManager) {
+      recordLogs("logs3-8", "SecureElement API is not present");
+      updateResultStatus("result3-8", "Red", "Fail");
+    }
+    else {
+      recordLogs("logs3-8", "Get SEReaders");
+      window.navigator.seManager.getSEReaders()
+      .then((readers) => {
+        window.reader = readers[0];
+        recordLogs("logs3-8", "Open one session");
+        return readers[0].openSession();
+      })
+      .then((session) => {
+        recordLogs("logs3-8", "Open a logical channel to PKCS15 applet which is under access control");
+        return session.openLogicalChannel(hexString2byte(window.AID.PKCS15));
+      })
+      .then((channel) => {
+        recordLogs("logs3-8", "Do not catch an error that could not open channel to PKCS15 applet");
+        updateResultStatus("result3-8", "Red", "Fail");
+        window.reader.closeAll();
+      })
+      .catch((err) => {
+        recordLogs("logs3-8", "error:" + err);
+        // Should update later after confirmed error method and error type
+        if (err.name == "SEGenericError") {
+          updateResultStatus("result3-8", "Green", "Pass");
+        }
+        else {
+          recordLogs("logs3-8", "Incorrect error type");
+          updateResultStatus("result3-8", "Red", "Fail");
+        }
+        window.reader.closeAll();
+      });
+    }
+  },
+
+  reset38Case: function() {
+    this.test38Button.disabled = false;
+    updateResultStatus("result3-8", "Black", "None");
+    clearLogs("logs3-8");
   },
 
 };
