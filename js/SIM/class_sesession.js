@@ -41,6 +41,26 @@ var SETest = {
     return this.reset34Button = document.getElementById('reset3-4');
   },
 
+  get test35Button() {
+    delete this.test35Button;
+    return this.test35Button = document.getElementById('test3-5');
+  },
+
+  get reset35Button() {
+    delete this.reset35Button;
+    return this.reset35Button = document.getElementById('reset3-5');
+  },
+
+  get test36Button() {
+    delete this.test36Button;
+    return this.test36Button = document.getElementById('test3-6');
+  },
+
+  get reset36Button() {
+    delete this.reset36Button;
+    return this.reset36Button = document.getElementById('reset3-6');
+  },
+
   init: function () {
     this.test31Button.addEventListener('click', this.test31Case.bind(this));
     this.reset31Button.addEventListener('click', this.reset31Case.bind(this));
@@ -50,6 +70,10 @@ var SETest = {
     this.reset33Button.addEventListener('click', this.reset33Case.bind(this));
     this.test34Button.addEventListener('click', this.test34Case.bind(this));
     this.reset34Button.addEventListener('click', this.reset34Case.bind(this));
+    this.test35Button.addEventListener('click', this.test35Case.bind(this));
+    this.reset35Button.addEventListener('click', this.reset35Case.bind(this));
+    this.test36Button.addEventListener('click', this.test36Case.bind(this));
+    this.reset36Button.addEventListener('click', this.reset36Case.bind(this));
   },
 
   uninit: function() {
@@ -61,6 +85,10 @@ var SETest = {
     this.reset33Button.removeEventListener('click', this.reset33Case.bind(this));
     this.test34Button.removeEventListener('click', this.test34Case.bind(this));
     this.reset34Button.removeEventListener('click', this.reset34Case.bind(this));
+    this.test35Button.removeEventListener('click', this.test35Case.bind(this));
+    this.reset35Button.removeEventListener('click', this.reset35Case.bind(this));
+    this.test36Button.removeEventListener('click', this.test36Case.bind(this));
+    this.reset36Button.removeEventListener('click', this.reset36Case.bind(this));
   },
 
   // Test #3-1
@@ -208,7 +236,7 @@ var SETest = {
       })
       .catch((err) => {
         recordLogs("logs3-4", "error:" + err);
-        // Should defined later
+        // Should update later after confirmed error method and error type
         if (err.name == "SEGenericError") {
           updateResultStatus("result3-4", "Green", "Pass");
         }
@@ -225,6 +253,98 @@ var SETest = {
     this.test34Button.disabled = false;
     updateResultStatus("result3-4", "Black", "None");
     clearLogs("logs3-4");
+  },
+
+  // Test #3-5
+  test35Case: function() {
+    recordLogs("logs3-5", "Start testing ...");
+    this.test35Button.disabled = true;
+    if (!window.navigator.seManager) {
+      recordLogs("logs3-5", "SecureElement API is not present");
+      updateResultStatus("result3-5", "Red", "Fail");
+    }
+    else {
+      recordLogs("logs3-5", "Get SEReaders");
+      window.navigator.seManager.getSEReaders()
+      .then((readers) => {
+        window.reader = readers[0];
+        recordLogs("logs3-5", "Open one session");
+        return readers[0].openSession();
+      })
+      .then((session) => {
+        recordLogs("logs3-5", "Open one logical channel to an illegal applet (length of AID is more than 16)");
+        return session.openLogicalChannel(hexString2byte(window.AID.AID_Illegal_2));
+      })
+      .then((channel) => {
+        recordLogs("logs3-5", "Do not catch an error");
+        updateResultStatus("result3-5", "Red", "Fail");
+        window.reader.closeAll();
+      })
+      .catch((err) => {
+        recordLogs("logs3-5", "error:" + err);
+        // Should update later after confirmed error method and error type
+        if (err.name == "SEGenericError") {
+          updateResultStatus("result3-5", "Green", "Pass");
+        }
+        else {
+          recordLogs("logs3-5", "Incorrect error type");
+          updateResultStatus("result3-5", "Red", "Fail");
+        }
+        window.reader.closeAll();
+      });
+    }
+  },
+
+  reset35Case: function() {
+    this.test35Button.disabled = false;
+    updateResultStatus("result3-5", "Black", "None");
+    clearLogs("logs3-5");
+  },
+
+  // Test #3-6
+  test36Case: function() {
+    recordLogs("logs3-6", "Start testing ...");
+    this.test36Button.disabled = true;
+    if (!window.navigator.seManager) {
+      recordLogs("logs3-6", "SecureElement API is not present");
+      updateResultStatus("result3-6", "Red", "Fail");
+    }
+    else {
+      recordLogs("logs3-6", "Get SEReaders");
+      window.navigator.seManager.getSEReaders()
+      .then((readers) => {
+        window.reader = readers[0];
+        recordLogs("logs3-6", "Open one session");
+        return readers[0].openSession();
+      })
+      .then((session) => {
+        recordLogs("logs3-6", "Open one logical channel with an AID which is not available on SE");
+        return session.openLogicalChannel(hexString2byte(window.AID.AID_Nonexisting));
+      })
+      .then((channel) => {
+        recordLogs("logs3-6", "Do not catch an error");
+        updateResultStatus("result3-6", "Red", "Fail");
+        window.reader.closeAll();
+      })
+      .catch((err) => {
+        recordLogs("logs3-6", "error:" + err);
+        // Should update later after confirmed error method and error type
+        if (err.name == "SEGenericError") {
+          updateResultStatus("result3-6", "Green", "Pass");
+        }
+        else {
+          recordLogs("logs3-6", "Incorrect error type");
+          updateResultStatus("result3-6", "Red", "Fail");
+        }
+        window.reader.closeAll();
+      });
+    }
+  },
+
+  reset36Case: function() {
+    this.test36Button.disabled = false;
+    updateResultStatus("result3-6", "Black", "None");
+    clearLogs("logs3-6");
   },
 
 };
