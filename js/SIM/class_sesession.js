@@ -91,6 +91,26 @@ var SETest = {
     return this.reset39Button = document.getElementById('reset3-9');
   },
 
+  get test310Button() {
+    delete this.test310Button;
+    return this.test310Button = document.getElementById('test3-10');
+  },
+
+  get reset310Button() {
+    delete this.reset310Button;
+    return this.reset310Button = document.getElementById('reset3-10');
+  },
+
+  get test311Button() {
+    delete this.test311Button;
+    return this.test311Button = document.getElementById('test3-11');
+  },
+
+  get reset311Button() {
+    delete this.reset311Button;
+    return this.reset311Button = document.getElementById('reset3-11');
+  },
+
   init: function () {
     this.test31Button.addEventListener('click', this.test31Case.bind(this));
     this.reset31Button.addEventListener('click', this.reset31Case.bind(this));
@@ -110,6 +130,10 @@ var SETest = {
     this.reset38Button.addEventListener('click', this.reset38Case.bind(this));
     this.test39Button.addEventListener('click', this.test39Case.bind(this));
     this.reset39Button.addEventListener('click', this.reset39Case.bind(this));
+    this.test310Button.addEventListener('click', this.test310Case.bind(this));
+    this.reset310Button.addEventListener('click', this.reset310Case.bind(this));
+    this.test311Button.addEventListener('click', this.test311Case.bind(this));
+    this.reset311Button.addEventListener('click', this.reset311Case.bind(this));
   },
 
   uninit: function() {
@@ -131,6 +155,10 @@ var SETest = {
     this.reset38Button.removeEventListener('click', this.reset38Case.bind(this));
     this.test39Button.removeEventListener('click', this.test39Case.bind(this));
     this.reset39Button.removeEventListener('click', this.reset39Case.bind(this));
+    this.test310Button.removeEventListener('click', this.test310Case.bind(this));
+    this.reset310Button.removeEventListener('click', this.reset310Case.bind(this));
+    this.test311Button.removeEventListener('click', this.test311Case.bind(this));
+    this.reset311Button.removeEventListener('click', this.reset311Case.bind(this));
   },
 
   // Test #3-1
@@ -543,6 +571,111 @@ var SETest = {
     updateResultStatus("result3-9", "Black", "None");
     clearLogs("logs3-9");
   },
+
+  // Test #3-10
+  test310Case: function() {
+    recordLogs("logs3-10", "Start testing ...");
+    this.test310Button.disabled = true;
+    if (!window.navigator.seManager) {
+      recordLogs("logs3-10", "SecureElement API is not present");
+      updateResultStatus("result3-10", "Red", "Fail");
+    }
+    else {
+      recordLogs("logs3-10", "Get SEReaders");
+      window.navigator.seManager.getSEReaders()
+      .then((readers) => {
+        window.reader = readers[0];
+        recordLogs("logs3-10", "Open one session");
+        return readers[0].openSession();
+      })
+      .then((session) => {
+        window.testSession = session;
+        recordLogs("logs3-10", "Open one logical channel to CRS applet ...");
+        return session.openLogicalChannel(hexString2byte(window.AID.CRS));
+      })
+      .then((channel) => {
+        window.channel1 = channel;
+        recordLogs("logs3-10", "Close channel via session.closeAll()");
+        return window.testSession.closeAll();
+      })
+      .then(() => {
+        if (window.channel1.isClosed == true) {
+          updateResultStatus("result3-10", "Green", "Pass")
+        }
+        else {
+          recordLogs("logs3-10", "Channel did not been closed");
+          updateResultStatus("result3-10", "Red", "Fail");
+        }
+        window.reader.closeAll();
+      })
+      .catch((err) => {
+        recordLogs("logs3-10", "error:" + err);
+        updateResultStatus("result3-10", "Red", "Fail");
+        window.reader.closeAll();
+      });
+    }
+  },
+
+  reset310Case: function() {
+    this.test310Button.disabled = false;
+    updateResultStatus("result3-10", "Black", "None");
+    clearLogs("logs3-10");
+  },
+
+  // Test #3-11
+  test311Case: function() {
+    recordLogs("logs3-11", "Start testing ...");
+    this.test311Button.disabled = true;
+    if (!window.navigator.seManager) {
+      recordLogs("logs3-11", "SecureElement API is not present");
+      updateResultStatus("result3-11", "Red", "Fail");
+    }
+    else {
+      recordLogs("logs3-11", "Get SEReaders");
+      window.navigator.seManager.getSEReaders()
+      .then((readers) => {
+        window.reader = readers[0];
+        recordLogs("logs3-11", "Open one session");
+        return readers[0].openSession();
+      })
+      .then((session) => {
+        window.testSession = session;
+        recordLogs("logs3-11", "Open one logical channel to CRS applet ...");
+        return session.openLogicalChannel(hexString2byte(window.AID.CRS));
+      })
+      .then((channel) => {
+        window.channel1 = channel;
+        recordLogs("logs3-11", "Open one logical channel to PPSE applet ...");
+        return window.testSession.openLogicalChannel(hexString2byte(window.AID.PPSE));
+      })
+      .then((channel) => {
+        window.channel2 = channel;
+        recordLogs("logs3-11", "Close channels via session.closeAll()");
+        return window.testSession.closeAll();
+      })
+      .then(() => {
+        if ((window.channel1.isClosed && window.channel2.isClosed) == true) {
+          updateResultStatus("result3-11", "Green", "Pass")
+        }
+        else {
+          recordLogs("logs3-11", "Channels did not been closed");
+          updateResultStatus("result3-11", "Red", "Fail");
+        }
+        window.reader.closeAll();
+      })
+      .catch((err) => {
+        recordLogs("logs3-11", "error:" + err);
+        updateResultStatus("result3-11", "Red", "Fail");
+        window.reader.closeAll();
+      });
+    }
+  },
+
+  reset311Case: function() {
+    this.test311Button.disabled = false;
+    updateResultStatus("result3-11", "Black", "None");
+    clearLogs("logs3-11");
+  },  
 
 };
 
