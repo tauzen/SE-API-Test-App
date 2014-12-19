@@ -41,6 +41,16 @@ var SETest = {
     return this.reset24Button = document.getElementById('reset2-4');
   },
 
+  get test25Button() {
+    delete this.test25Button;
+    return this.test25Button = document.getElementById('test2-5');
+  },
+
+  get reset25Button() {
+    delete this.reset25Button;
+    return this.reset25Button = document.getElementById('reset2-5');
+  },
+
   init: function () {
     this.test21Button.addEventListener('click', this.test21Case.bind(this));
     this.reset21Button.addEventListener('click', this.reset21Case.bind(this));
@@ -50,6 +60,8 @@ var SETest = {
     this.reset23Button.addEventListener('click', this.reset23Case.bind(this));
     this.test24Button.addEventListener('click', this.test24Case.bind(this));
     this.reset24Button.addEventListener('click', this.reset24Case.bind(this));
+    this.test25Button.addEventListener('click', this.test25Case.bind(this));
+    this.reset25Button.addEventListener('click', this.reset25Case.bind(this));
   },
 
   uninit: function() {
@@ -61,6 +73,8 @@ var SETest = {
     this.reset23Button.removeEventListener('click', this.reset23Case.bind(this));
     this.test24Button.removeEventListener('click', this.test24Case.bind(this));
     this.reset24Button.removeEventListener('click', this.reset24Case.bind(this));
+    this.test25Button.removeEventListener('click', this.test25Case.bind(this));
+    this.reset25Button.removeEventListener('click', this.reset25Case.bind(this));
   },
 
   // Test #2-1
@@ -256,7 +270,43 @@ var SETest = {
     updateResultStatus("result2-4", "Black", "None");
     clearLogs("logs2-4");
   },
-    
+
+  // Test #2-5
+  test25Case: function() {
+    recordLogs("logs2-5", "Start testing ...");
+    this.test25Button.disabled = true;
+    if (!window.navigator.seManager) {
+      recordLogs("logs2-5", "SecureElement API is not present");
+      updateResultStatus("result2-5", "Red", "Fail");
+    }
+    else {
+      recordLogs("logs2-5", "Get SEReaders");
+      window.navigator.seManager.getSEReaders()
+      .then((readers) => {
+        recordLogs("logs2-5", "Check SE type");
+        var result = readers[0].type;
+        recordLogs("logs2-5", "SE type: " + result);
+        if (result == "uicc") {
+          updateResultStatus("result2-5", "Green", "Pass");
+        }
+        else {
+          recordLogs("logs2-5", "Incorrect SE type");
+          updateResultStatus("result2-5", "Red", "Fail");
+        }
+      })
+      .catch((err) => {
+        recordLogs("logs2-5", "error:" + err);
+        updateResultStatus("result2-5", "Red", "Fail");
+      });
+    }
+  },
+
+  reset25Case: function() {
+    this.test25Button.disabled = false;
+    updateResultStatus("result2-5", "Black", "None");
+    clearLogs("logs2-5");
+  },
+
 };
 
 window.addEventListener('load', SETest.init.bind(SETest));
