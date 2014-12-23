@@ -227,15 +227,15 @@ var SETest = {
         if (checkResponse("logs4-4", response, 0x90, 0x00) == false) {
           window.result44 = false;
         } 
-        recordLogs("logs4-4", "Transmit nfcActivate command");
-        return response.channel.transmit(window.APDU.CRS.nfcActivate);
+        recordLogs("logs4-4", "Transmit nfcDeactivate command");
+        return response.channel.transmit(window.APDU.CRS.nfcDeactivate);
       })
       .then((response) => {
         if (checkResponse("logs4-4", response, 0x90, 0x00) == false) {
           window.result44 = false;
         } 
-        recordLogs("logs4-4", "Transmit nfcDeactivate command");
-        return response.channel.transmit(window.APDU.CRS.nfcDeactivate);
+        recordLogs("logs4-4", "Transmit nfcActivate command");
+        return response.channel.transmit(window.APDU.CRS.nfcActivate);
       })
       .then((response) => {
         if (checkResponse("logs4-4", response, 0x90, 0x00) == false) {
