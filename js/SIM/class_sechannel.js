@@ -31,6 +31,16 @@ var SETest = {
     return this.reset43Button = document.getElementById('reset4-3');
   },
 
+  get test44Button() {
+    delete this.test44Button;
+    return this.test44Button = document.getElementById('test4-4');
+  },
+
+  get reset44Button() {
+    delete this.reset44Button;
+    return this.reset44Button = document.getElementById('reset4-4');
+  },
+
   init: function () {
     this.test41Button.addEventListener('click', this.test41Case.bind(this));
     this.reset41Button.addEventListener('click', this.reset41Case.bind(this));
@@ -38,6 +48,8 @@ var SETest = {
     this.reset42Button.addEventListener('click', this.reset42Case.bind(this));
     this.test43Button.addEventListener('click', this.test43Case.bind(this));
     this.reset43Button.addEventListener('click', this.reset43Case.bind(this));
+    this.test44Button.addEventListener('click', this.test44Case.bind(this));
+    this.reset44Button.addEventListener('click', this.reset44Case.bind(this));
   },
 
   uninit: function() {
@@ -47,6 +59,8 @@ var SETest = {
     this.reset42Button.removeEventListener('click', this.reset42Case.bind(this));
     this.test43Button.removeEventListener('click', this.test43Case.bind(this));
     this.reset43Button.removeEventListener('click', this.reset43Case.bind(this));
+    this.test44Button.removeEventListener('click', this.test44Case.bind(this));
+    this.reset44Button.removeEventListener('click', this.reset44Case.bind(this));
   },
 
   // Test #4-1
@@ -183,7 +197,72 @@ var SETest = {
     updateResultStatus("result4-3", "Black", "None");
     clearLogs("logs4-3");
   },
-  
+
+  // Test #4-4
+  test44Case: function() {
+    recordLogs("logs4-4", "Start testing ...");
+    this.test44Button.disabled = true;
+    window.result44 = true;
+    if (!window.navigator.seManager) {
+      recordLogs("logs4-4", "SecureElement API is not present");
+      updateResultStatus("result4-4", "Red", "Fail");
+    }
+    else {
+      recordLogs("logs4-4", "Get SEReaders");
+      window.navigator.seManager.getSEReaders()
+      .then((readers) => {
+        window.reader = readers[0];
+        recordLogs("logs4-4", "Open one session");
+        return readers[0].openSession();
+      })
+      .then((session) => {
+        recordLogs("logs4-4", "open a logical channel to CRS applet ...");
+        return session.openLogicalChannel(hexString2byte(window.AID.CRS));
+      })
+      .then((channel) => {
+        recordLogs("logs4-4", "Channel opened, transmit getData command");
+        return channel.transmit(window.APDU.CRS.getData);
+      })
+      .then((response) => {
+        if (checkResponse("logs4-4", response, 0x90, 0x00) == false) {
+          window.result44 = false;
+        } 
+        recordLogs("logs4-4", "Transmit nfcActivate command");
+        return response.channel.transmit(window.APDU.CRS.nfcActivate);
+      })
+      .then((response) => {
+        if (checkResponse("logs4-4", response, 0x90, 0x00) == false) {
+          window.result44 = false;
+        } 
+        recordLogs("logs4-4", "Transmit nfcDeactivate command");
+        return response.channel.transmit(window.APDU.CRS.nfcDeactivate);
+      })
+      .then((response) => {
+        if (checkResponse("logs4-4", response, 0x90, 0x00) == false) {
+          window.result44 = false;
+        }
+        if (window.result44) {
+          updateResultStatus("result4-4", "Green", "Pass");  
+        }
+        else {
+          updateResultStatus("result4-4", "Red", "Fail");
+        }
+        window.reader.closeAll();
+      })
+      .catch((err) => {
+        recordLogs("logs4-4", "error:" + err);
+        updateResultStatus("result4-4", "Red", "Fail");
+        window.reader.closeAll();
+      });
+    }
+  },
+
+  reset44Case: function() {
+    this.test44Button.disabled = false;
+    updateResultStatus("result4-4", "Black", "None");
+    clearLogs("logs4-4");
+  },
+    
 };
 
 window.addEventListener('load', SETest.init.bind(SETest));
