@@ -71,6 +71,16 @@ var SETest = {
     return this.reset47Button = document.getElementById('reset4-7');
   },
 
+  get test48Button() {
+    delete this.test48Button;
+    return this.test48Button = document.getElementById('test4-8');
+  },
+
+  get reset48Button() {
+    delete this.reset48Button;
+    return this.reset48Button = document.getElementById('reset4-8');
+  },
+
   init: function () {
     this.test41Button.addEventListener('click', this.test41Case.bind(this));
     this.reset41Button.addEventListener('click', this.reset41Case.bind(this));
@@ -86,6 +96,8 @@ var SETest = {
     this.reset46Button.addEventListener('click', this.reset46Case.bind(this));
     this.test47Button.addEventListener('click', this.test47Case.bind(this));
     this.reset47Button.addEventListener('click', this.reset47Case.bind(this));
+    this.test48Button.addEventListener('click', this.test48Case.bind(this));
+    this.reset48Button.addEventListener('click', this.reset48Case.bind(this));
   },
 
   uninit: function() {
@@ -103,6 +115,8 @@ var SETest = {
     this.reset46Button.removeEventListener('click', this.reset46Case.bind(this));
     this.test47Button.removeEventListener('click', this.test47Case.bind(this));
     this.reset47Button.removeEventListener('click', this.reset47Case.bind(this));
+    this.test48Button.removeEventListener('click', this.test48Case.bind(this));
+    this.reset48Button.removeEventListener('click', this.reset48Case.bind(this));
   },
 
   // Test #4-1
@@ -494,6 +508,55 @@ var SETest = {
     this.test47Button.disabled = false;
     updateResultStatus("result4-7", "Black", "None");
     clearLogs("logs4-7");
+  },
+
+  // Test #4-8
+  test48Case: function() {
+    recordLogs("logs4-8", "Start testing ...");
+    this.test48Button.disabled = true;
+    if (!window.navigator.seManager) {
+      recordLogs("logs4-8", "SecureElement API is not present");
+      updateResultStatus("result4-8", "Red", "Fail");
+    }
+    else {
+      recordLogs("logs4-8", "Get SEReaders");
+      window.navigator.seManager.getSEReaders()
+      .then((readers) => {
+        window.reader = readers[0];
+        recordLogs("logs4-8", "Open a session");
+        return readers[0].openSession();
+      })
+      .then((session) => {
+        recordLogs("logs4-8", "Open a logical channel to CRS applet ...");
+        return session.openLogicalChannel(hexString2byte(window.AID.CRS));
+      })
+      .then((channel) => {
+        window.channel = channel;
+        recordLogs("logs4-8", "Close logical channel");
+        return channel.close();
+      })
+      .then(() => {
+        recordLogs("logs4-8", "Check closed channel status");
+        if (window.channel.isClosed == true) {
+          updateResultStatus("result4-8", "Green", "Pass");
+        }
+        else {
+          updateResultStatus("result4-8", "Red", "Fail");
+        }
+        window.reader.closeAll();
+      })
+      .catch((err) => {
+        recordLogs("logs4-8", "error:" + err);
+        updateResultStatus("result4-8", "Red", "Fail");
+        window.reader.closeAll();
+      });
+    }
+  },
+
+  reset48Case: function() {
+    this.test48Button.disabled = false;
+    updateResultStatus("result4-8", "Black", "None");
+    clearLogs("logs4-8");
   },
 
 };
