@@ -41,6 +41,16 @@ var SETest = {
     return this.reset44Button = document.getElementById('reset4-4');
   },
 
+  get test45Button() {
+    delete this.test45Button;
+    return this.test45Button = document.getElementById('test4-5');
+  },
+
+  get reset45Button() {
+    delete this.reset45Button;
+    return this.reset45Button = document.getElementById('reset4-5');
+  },
+
   init: function () {
     this.test41Button.addEventListener('click', this.test41Case.bind(this));
     this.reset41Button.addEventListener('click', this.reset41Case.bind(this));
@@ -50,6 +60,8 @@ var SETest = {
     this.reset43Button.addEventListener('click', this.reset43Case.bind(this));
     this.test44Button.addEventListener('click', this.test44Case.bind(this));
     this.reset44Button.addEventListener('click', this.reset44Case.bind(this));
+    this.test45Button.addEventListener('click', this.test45Case.bind(this));
+    this.reset45Button.addEventListener('click', this.reset45Case.bind(this));
   },
 
   uninit: function() {
@@ -61,6 +73,8 @@ var SETest = {
     this.reset43Button.removeEventListener('click', this.reset43Case.bind(this));
     this.test44Button.removeEventListener('click', this.test44Case.bind(this));
     this.reset44Button.removeEventListener('click', this.reset44Case.bind(this));
+    this.test45Button.removeEventListener('click', this.test45Case.bind(this));
+    this.reset45Button.removeEventListener('click', this.reset45Case.bind(this));
   },
 
   // Test #4-1
@@ -261,6 +275,90 @@ var SETest = {
     this.test44Button.disabled = false;
     updateResultStatus("result4-4", "Black", "None");
     clearLogs("logs4-4");
+  },
+
+  // Test #4-5
+  test45Case: function() {
+    recordLogs("logs4-5", "Start testing ...");
+    this.test45Button.disabled = true;
+    window.result45 = true;
+    if (!window.navigator.seManager) {
+      recordLogs("logs4-5", "SecureElement API is not present");
+      updateResultStatus("result4-5", "Red", "Fail");
+    }
+    else {
+      recordLogs("logs4-5", "Get SEReaders");
+      window.navigator.seManager.getSEReaders()
+      .then((readers) => {
+        window.reader = readers[0];
+        recordLogs("logs4-5", "Open 1st session");
+        return readers[0].openSession();
+      })
+      .then((session) => {
+        recordLogs("logs4-5", "1st sesson opens a logical channel to PPSE applet ...");
+        return session.openLogicalChannel(hexString2byte(window.AID.PPSE));
+      })
+      .then((channel) => {
+        window.c1 = channel;
+        recordLogs("logs4-5", "Open 2nd session");
+        return window.reader.openSession();
+      })
+      .then((session) => {
+        recordLogs("logs4-5", "2st sesson opens a logical channel to PPSE applet ...");
+        return session.openLogicalChannel(hexString2byte(window.AID.PPSE));
+      })
+      .then((channel) => {
+        window.c2 = channel;
+        recordLogs("logs4-5", "Open 3rd session");
+        return window.reader.openSession();
+      })
+      .then((session) => {
+        recordLogs("logs4-5", "3rd sesson opens a logical channel to PPSE applet ...");
+        return session.openLogicalChannel(hexString2byte(window.AID.PPSE));
+      })
+      .then((channel) => {
+        window.c3 = channel;
+        recordLogs("logs4-5", "1st channel transmit getTemplate command");
+        return window.c1.transmit(window.APDU.PPSE.getTemplate);
+      })
+      .then((response) => {
+        if (checkResponse("logs4-5", response, 0x90, 0x00) == false) {
+          window.result45 = false;
+        }
+        recordLogs("logs4-5", "2nd channel transmit getTemplate command");
+        return window.c2.transmit(window.APDU.PPSE.getTemplate);   
+      })
+      .then((response) =>  {
+        if (checkResponse("logs4-5", response, 0x90, 0x00) == false) {
+          window.result45 = false;
+        }
+        recordLogs("logs4-5", "3rd channel transmit getTemplate command");
+        return window.c3.transmit(window.APDU.PPSE.getTemplate);
+      })
+      .then((response) => {
+        if (checkResponse("logs4-5", response, 0x90, 0x00) == false) {
+          window.result45 = false;
+        }
+        if (window.result45) {
+          updateResultStatus("result4-5", "Green", "Pass");
+        }
+        else {
+          updateResultStatus("result4-5", "Red", "Fail");
+        }
+        window.reader.closeAll();    
+      })
+      .catch((err) => {
+        recordLogs("logs4-5", "error:" + err);
+        updateResultStatus("result4-5", "Red", "Fail");
+        window.reader.closeAll();
+      });
+    }
+  },
+
+  reset45Case: function() {
+    this.test45Button.disabled = false;
+    updateResultStatus("result4-5", "Black", "None");
+    clearLogs("logs4-5");
   },
     
 };
