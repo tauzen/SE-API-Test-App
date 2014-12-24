@@ -61,6 +61,16 @@ var SETest = {
     return this.reset46Button = document.getElementById('reset4-6');
   },
 
+  get test47Button() {
+    delete this.test47Button;
+    return this.test47Button = document.getElementById('test4-7');
+  },
+
+  get reset47Button() {
+    delete this.reset47Button;
+    return this.reset47Button = document.getElementById('reset4-7');
+  },
+
   init: function () {
     this.test41Button.addEventListener('click', this.test41Case.bind(this));
     this.reset41Button.addEventListener('click', this.reset41Case.bind(this));
@@ -74,6 +84,8 @@ var SETest = {
     this.reset45Button.addEventListener('click', this.reset45Case.bind(this));
     this.test46Button.addEventListener('click', this.test46Case.bind(this));
     this.reset46Button.addEventListener('click', this.reset46Case.bind(this));
+    this.test47Button.addEventListener('click', this.test47Case.bind(this));
+    this.reset47Button.addEventListener('click', this.reset47Case.bind(this));
   },
 
   uninit: function() {
@@ -89,6 +101,8 @@ var SETest = {
     this.reset45Button.removeEventListener('click', this.reset45Case.bind(this));
     this.test46Button.removeEventListener('click', this.test46Case.bind(this));
     this.reset46Button.removeEventListener('click', this.reset46Case.bind(this));
+    this.test47Button.removeEventListener('click', this.test47Case.bind(this));
+    this.reset47Button.removeEventListener('click', this.reset47Case.bind(this));
   },
 
   // Test #4-1
@@ -109,7 +123,7 @@ var SETest = {
       })
       .then((session) => {
         window.testSession = session;
-	recordLogs("logs4-1", "open a logical channel to CRS applet ...");
+	recordLogs("logs4-1", "Open a logical channel to CRS applet ...");
         return session.openLogicalChannel(hexString2byte(window.AID.CRS));
       })
       .then((channel) => {
@@ -153,7 +167,7 @@ var SETest = {
         return readers[0].openSession();
       })
       .then((session) => {
-        recordLogs("logs4-2", "open a logical channel to CRS applet ...");
+        recordLogs("logs4-2", "Open a logical channel to CRS applet ...");
         return session.openLogicalChannel(hexString2byte(window.AID.CRS));
       })
       .then((channel) => {
@@ -197,7 +211,7 @@ var SETest = {
         return readers[0].openSession();
       })
       .then((session) => {
-        recordLogs("logs4-3", "open a logical channel to CRS applet ...");
+        recordLogs("logs4-3", "Open a logical channel to CRS applet ...");
         return session.openLogicalChannel(hexString2byte(window.AID.CRS));
       })
       .then((channel) => {
@@ -244,7 +258,7 @@ var SETest = {
         return readers[0].openSession();
       })
       .then((session) => {
-        recordLogs("logs4-4", "open a logical channel to CRS applet ...");
+        recordLogs("logs4-4", "Open a logical channel to CRS applet ...");
         return session.openLogicalChannel(hexString2byte(window.AID.CRS));
       })
       .then((channel) => {
@@ -392,7 +406,7 @@ var SETest = {
         return readers[0].openSession();
       })
       .then((session) => {
-        recordLogs("logs4-6", "open a logical channel to CRS applet ...");
+        recordLogs("logs4-6", "Open a logical channel to CRS applet ...");
         return session.openLogicalChannel(hexString2byte(window.AID.CRS));
       })
       .then((channel) => {
@@ -426,6 +440,62 @@ var SETest = {
     clearLogs("logs4-6");
   },
     
+  // Test #4-7
+  test47Case: function() {
+    recordLogs("logs4-7", "Start testing ...");
+    this.test47Button.disabled = true;
+    if (!window.navigator.seManager) {
+      recordLogs("logs4-7", "SecureElement API is not present");
+      updateResultStatus("result4-7", "Red", "Fail");
+    }
+    else {
+      recordLogs("logs4-7", "Get SEReaders");
+      window.navigator.seManager.getSEReaders()
+      .then((readers) => {
+        window.reader = readers[0];
+        recordLogs("logs4-7", "Open a session");
+        return readers[0].openSession();
+      })
+      .then((session) => {
+        recordLogs("logs4-7", "Open a logical channel to CRS applet ...");
+        return session.openLogicalChannel(hexString2byte(window.AID.CRS));
+      })
+      .then((channel) => {
+        window.channel = channel;
+        recordLogs("logs4-7", "Close logical channel");
+        return channel.close();
+      })
+      .then(() => {
+        recordLogs("logs4-7", "Try to transmit getData command via closed channel");
+        return window.channel.transmit(window.APDU.CRS.getData);
+      })
+      .then((response) => {
+        recordLogs("logs4-7", "Do not catch an error");
+        updateResultStatus("result4-7", "Red", "Fail");
+        window.reader.closeAll();
+      })
+      .catch((err) => {
+        recordLogs("logs4-7", "error:" + err);
+        // Should update later after confirmed error method and error type
+        if (err.name == "SEInvalidChannelError") {
+          recordLogs("logs4-7", "Correct error catched");
+          updateResultStatus("result4-7", "Green", "Pass");
+        }
+        else {
+          recordLogs("logs4-7", "Incorrect error type");
+          updateResultStatus("result4-7", "Red", "Fail");
+        }
+        window.reader.closeAll();
+      });
+    }
+  },
+
+  reset47Case: function() {
+    this.test47Button.disabled = false;
+    updateResultStatus("result4-7", "Black", "None");
+    clearLogs("logs4-7");
+  },
+
 };
 
 window.addEventListener('load', SETest.init.bind(SETest));
