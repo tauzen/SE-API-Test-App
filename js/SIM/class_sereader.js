@@ -160,6 +160,7 @@ var SETest = {
       updateResultStatus("result2-3", "Red", "Fail");
     }
     else {
+      var failed = false;
       recordLogs("logs2-3", "Get SEReaders");
       window.navigator.seManager.getSEReaders()
       .then((readers) => {
@@ -175,23 +176,22 @@ var SETest = {
       })
       .then((session) => {
         window.testSESession2 = session;
-        if (window.testSESession1 == window.testSESession2) {
-          recordLogs("logs2-3", "Session instances s1 and s2 are the same");
-          updateResultStatus("result2-3", "Red", "Fail");     
-          window.reader.closeAll(); 
+        if (window.testSESession1 === window.testSESession2) {
+          recordLogs("logs2-3", "Session instances s1 and s2 are the same, failing");
+          failed = true;
         }
-        else {
-          recordLogs("logs2-3", "Execute reader.closeAll()");
-    	  window.reader.closeAll();
-          recordLogs("logs2-3", "Check if all sessions have been closed"); 
-          if((window.testSESession1.isClosed && window.testSESession2.isClosed) == false){
-            recordLogs("logs2-3", "Sessions have not been closed");
-            updateResultStatus("result2-3", "Red", "Fail");
-          }
-          else {
-            updateResultStatus("result2-3", "Green", "Pass");
-          }
+
+        recordLogs("logs2-3", "Execute reader.closeAll()");
+        return window.reader.closeAll();
+      })
+      .then(() => {
+        recordLogs("logs2-3", "Check if all sessions have been closed");
+        if(!window.testSESession1.isClosed || !window.testSESession2.isClosed){
+          recordLogs("logs2-3", "Sessions have not been closed");
+          failed = true;
         }
+
+        updateResultStatus("result2-3", "Green", (failed) ? "Fail" : "Pass");
       })
       .catch((err) => {
         recordLogs("logs2-3", "error:" + err);
