@@ -306,8 +306,8 @@ var SETest = {
       })
       .catch((err) => {
         recordLogs("logs3-4", "error:" + err);
-        // Should update later after confirmed error method and error type
-        if (err.name == "SEGenericError") {
+        // Should update later after confirmed error type
+        if (err.message == "SEGenericError") {
           updateResultStatus("result3-4", "Green", "Pass");
         }
         else {
@@ -352,8 +352,8 @@ var SETest = {
       })
       .catch((err) => {
         recordLogs("logs3-5", "error:" + err);
-        // Should update later after confirmed error method and error type
-        if (err.name == "SEGenericError") {
+        // Should update later after confirmed error type
+        if (err.message == "SEGenericError") {
           updateResultStatus("result3-5", "Green", "Pass");
         }
         else {
@@ -398,8 +398,8 @@ var SETest = {
       })
       .catch((err) => {
         recordLogs("logs3-6", "error:" + err);
-        // Should update later after confirmed error method and error type
-        if (err.name == "SEGenericError") {
+        // Should update later after confirmed error type
+        if (err.message == "SEGenericError") {
           updateResultStatus("result3-6", "Green", "Pass");
         }
         else {
@@ -448,8 +448,8 @@ var SETest = {
       })
       .catch((err) => {
         recordLogs("logs3-7", "error:" + err);
-        // Should update later after confirmed error method and error type
-        if (err.name == "SEGenericError") {
+        // Should update later after confirmed error type
+        if (err.message == "SEGenericError") {
           updateResultStatus("result3-7", "Green", "Pass");
         }
         else {
@@ -494,8 +494,8 @@ var SETest = {
       })
       .catch((err) => {
         recordLogs("logs3-8", "error:" + err);
-        // Should update later after confirmed error method and error type
-        if (err.name == "SEGenericError") {
+        // Should update later after confirmed error type
+        if (err.message == "SEGenericError") {
           updateResultStatus("result3-8", "Green", "Pass");
         }
         else {
@@ -553,8 +553,8 @@ var SETest = {
       })
       .catch((err) => {
         recordLogs("logs3-9", "error:" + err);
-        // Should update later after confirmed error method and error type
-        if (err.name == "SEGenericError") {
+        // Should update later after confirmed error type
+        if (err.message == "SEGenericError") {
           updateResultStatus("result3-9", "Green", "Pass");
         }
         else {

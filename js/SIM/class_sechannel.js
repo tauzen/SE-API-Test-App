@@ -432,8 +432,8 @@ var SETest = {
       })
       .catch((err) => {
         recordLogs("logs4-6", "error:" + err);
-        // Should update later after confirmed error method and error type
-        if (err.name == "SEGenericError") {
+        // Should update later after confirmed error type
+        if (err.message == "SEGenericError") {
           recordLogs("logs4-6", "Correct error catched");
           updateResultStatus("result4-6", "Green", "Pass");
         }
@@ -488,8 +488,8 @@ var SETest = {
       })
       .catch((err) => {
         recordLogs("logs4-7", "error:" + err);
-        // Should update later after confirmed error method and error type
-        if (err.name == "SEInvalidChannelError") {
+        // Should update later after confirmed error type
+        if (err.message == "SEInvalidChannelError") {
           recordLogs("logs4-7", "Correct error catched");
           updateResultStatus("result4-7", "Green", "Pass");
         }
