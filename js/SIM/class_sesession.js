@@ -606,7 +606,6 @@ var SETest = {
           recordLogs("logs3-10", "Channel did not been closed");
           updateResultStatus("result3-10", "Red", "Fail");
         }
-        window.reader.closeAll();
       })
       .catch((err) => {
         recordLogs("logs3-10", "error:" + err);
@@ -661,7 +660,6 @@ var SETest = {
           recordLogs("logs3-11", "Channels did not been closed");
           updateResultStatus("result3-11", "Red", "Fail");
         }
-        window.reader.closeAll();
       })
       .catch((err) => {
         recordLogs("logs3-11", "error:" + err);

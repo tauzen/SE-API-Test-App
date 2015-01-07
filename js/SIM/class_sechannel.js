@@ -541,7 +541,6 @@ var SETest = {
         else {
           updateResultStatus("result4-8", "Red", "Fail");
         }
-        window.reader.closeAll();
       })
       .catch((err) => {
         recordLogs("logs4-8", "error:" + err);
