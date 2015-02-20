@@ -16,7 +16,6 @@
     "120": "/style/icons/SIM_card.png"
   },
   "permissions": {
-    "secureelement-manage": {},
-    "mobileconnection":{}
+    "secureelement-manage": {}
   }
 }
