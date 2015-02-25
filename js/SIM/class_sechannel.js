@@ -432,15 +432,8 @@ var SETest = {
       })
       .catch((err) => {
         recordLogs("logs4-6", "error:" + err);
-        // Should update later after confirmed error type
-        if (err.message == "SEGenericError") {
-          recordLogs("logs4-6", "Correct error catched");
-          updateResultStatus("result4-6", "Green", "Pass");
-        }
-        else {
-          recordLogs("logs4-6", "Incorrect error type");
-          updateResultStatus("result4-6", "Red", "Fail");
-        }
+        recordLogs("logs4-6", "Error catched");
+        updateResultStatus("result4-6", "Green", "Pass");
         window.reader.closeAll();
       });
     }
