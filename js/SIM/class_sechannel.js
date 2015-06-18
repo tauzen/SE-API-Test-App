@@ -480,9 +480,8 @@ var SETest = {
         window.reader.closeAll();
       })
       .catch((err) => {
-        recordLogs("logs4-7", "error:" + err);
-        // Should update later after confirmed error type
-        if (err.message == "SEInvalidChannelError") {
+        recordLogs("logs4-7", "error:" + JSON.stringify(err));
+        if (err.name === "SEBadStateError") {
           recordLogs("logs4-7", "Correct error catched");
           updateResultStatus("result4-7", "Green", "Pass");
         }
@@ -579,18 +578,19 @@ var SETest = {
         return window.channel.close();
       })
       .then(() => {
-        recordLogs("logs4-9", "Check closed channel status");
-        if (window.channel.isClosed == true) {
-          updateResultStatus("result4-9", "Green", "Pass");
-        }
-        else {
-          updateResultStatus("result4-9", "Red", "Fail");
-        }
+        recordLogs("logs4-9", "Closing channel which was already close should throw error");
+        updateResultStatus("result4-9", "Red", "Fail");
         window.reader.closeAll();
       })
       .catch((err) => {
-        recordLogs("logs4-9", "error:" + err);
-        updateResultStatus("result4-9", "Red", "Fail");
+        if (err.name === "SEBadStateError") {
+          recordLogs("logs4-9", "Correct error catched");
+          updateResultStatus("result4-9", "Green", "Pass");
+        }
+        else {
+          recordLogs("logs4-9", "Incorrect error type");
+          updateResultStatus("result4-9", "Red", "Fail");
+        }
         window.reader.closeAll();
       });
     }
