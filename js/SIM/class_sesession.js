@@ -305,9 +305,9 @@ var SETest = {
         window.reader.closeAll();
       })
       .catch((err) => {
-        recordLogs("logs3-4", "error:" + err);
+        recordLogs("logs3-4", "error:" + JSON.stringify(err));
         // Should update later after confirmed error type
-        if (err.message == "SEGenericError") {
+        if (err.name === "SEIllegalParameterError") {
           updateResultStatus("result3-4", "Green", "Pass");
         }
         else {
