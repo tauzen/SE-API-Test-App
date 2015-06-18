@@ -305,9 +305,8 @@ var SETest = {
         window.reader.closeAll();
       })
       .catch((err) => {
-        recordLogs("logs3-4", "error:" + err);
-        // Should update later after confirmed error type
-        if (err.message == "SEGenericError") {
+        recordLogs("logs3-4", "error:" + JSON.stringify(err));
+        if (err.name === "SEIllegalParameterError") {
           updateResultStatus("result3-4", "Green", "Pass");
         }
         else {
@@ -351,9 +350,8 @@ var SETest = {
         window.reader.closeAll();
       })
       .catch((err) => {
-        recordLogs("logs3-5", "error:" + err);
-        // Should update later after confirmed error type
-        if (err.message == "SEGenericError") {
+        recordLogs("logs3-5", "error:" + JSON.stringify(err));
+        if (err.name === "SEIllegalParameterError") {
           updateResultStatus("result3-5", "Green", "Pass");
         }
         else {
@@ -397,9 +395,9 @@ var SETest = {
         window.reader.closeAll();
       })
       .catch((err) => {
-        recordLogs("logs3-6", "error:" + err);
+        recordLogs("logs3-6", "error:" + JSON.stringify(err));
         // Should update later after confirmed error type
-        if (err.message == "SEGenericError") {
+        if (err.name === "SEGenericError") {
           updateResultStatus("result3-6", "Green", "Pass");
         }
         else {
@@ -447,9 +445,8 @@ var SETest = {
         updateResultStatus("result3-7", "Red", "Fail");
       })
       .catch((err) => {
-        recordLogs("logs3-7", "error:" + err);
-        // Should update later after confirmed error type
-        if (err.message == "SEGenericError") {
+        recordLogs("logs3-7", "error:" + JSON.stringify(err));
+        if (err.name === "SEBadStateError") {
           updateResultStatus("result3-7", "Green", "Pass");
         }
         else {
@@ -493,9 +490,8 @@ var SETest = {
         window.reader.closeAll();
       })
       .catch((err) => {
-        recordLogs("logs3-8", "error:" + err);
-        // Should update later after confirmed error type
-        if (err.message == "SEGenericError") {
+        recordLogs("logs3-8", "error:" + JSON.stringify(err));
+        if (err.name === "SESecurityError") {
           updateResultStatus("result3-8", "Green", "Pass");
         }
         else {
@@ -535,16 +531,16 @@ var SETest = {
         return session.openLogicalChannel(hexString2byte(window.AID.CRS));
       })
       .then((channel) => {
-        recordLogs("logs3-9", "Open second channel to CRS applet...");
-        return window.testSession.openLogicalChannel(hexString2byte(window.AID.CRS));
+        recordLogs("logs3-9", "Open second channel to PPSE applet...");
+        return window.testSession.openLogicalChannel(hexString2byte(window.AID.PPSE));
       })
       .then((channel) => {
-        recordLogs("logs3-9", "Open third channel to CRS applet...");
-        return window.testSession.openLogicalChannel(hexString2byte(window.AID.CRS));
+        recordLogs("logs3-9", "Open third channel to PKCS15 applet...");
+        return window.testSession.openLogicalChannel(hexString2byte(window.AID.PKCS15));
       })
       .then((channel) => {
-        recordLogs("logs3-9", "Open fourth channel to CRS applet...");
-        return window.testSession.openLogicalChannel(hexString2byte(window.AID.CRS));
+        recordLogs("logs3-9", "Open fourth channel to PPSE applet...");
+        return window.testSession.openLogicalChannel(hexString2byte(window.AID.PPSE));
       })
       .then((channel) => {
         recordLogs("logs3-9", "Do not catch an error when open channels that over maximum capacity (max = 3)");
@@ -552,9 +548,9 @@ var SETest = {
         window.reader.closeAll();
       })
       .catch((err) => {
-        recordLogs("logs3-9", "error:" + err);
+        recordLogs("logs3-9", "error:" + JSON.stringify(err));
         // Should update later after confirmed error type
-        if (err.message == "SEGenericError") {
+        if (err.name === "SEGenericError") {
           updateResultStatus("result3-9", "Green", "Pass");
         }
         else {
